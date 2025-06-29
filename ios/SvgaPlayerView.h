@@ -11,11 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Commands
 - (void)startAnimation;
-- (void)startAnimationWithRange:(NSInteger)location length:(NSInteger)length reverse:(BOOL)reverse;
-- (void)pauseAnimation;
 - (void)stopAnimation;
-- (void)stepToFrame:(NSInteger)frame andPlay:(BOOL)andPlay;
-- (void)stepToPercentage:(CGFloat)percentage andPlay:(BOOL)andPlay;
 
 @end
 

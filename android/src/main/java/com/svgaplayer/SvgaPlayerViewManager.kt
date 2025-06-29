@@ -1,147 +1,132 @@
 package com.svgaplayer
 
+import android.content.Context
+import android.util.Log
+import com.facebook.infer.annotation.Assertions
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.facebook.react.viewmanagers.SvgaPlayerViewManagerDelegate
+import com.facebook.react.viewmanagers.SvgaPlayerViewManagerInterface
+import com.opensource.svgaplayer.SVGAParser
+import com.opensource.svgaplayer.SVGAVideoEntity
+import com.opensource.svgaplayer.SVGACache
+import com.svgaplayer.events.TopErrorEvent
+import com.svgaplayer.events.TopFinishedEvent
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.net.URL
 
 @ReactModule(name = SvgaPlayerViewManager.NAME)
-class SvgaPlayerViewManager : SimpleViewManager<SvgaPlayerView>() {
+class SvgaPlayerViewManager : SimpleViewManager<SvgaPlayerView>(), SvgaPlayerViewManagerInterface<SvgaPlayerView> {
 
-  override fun getName(): String {
-    return NAME
+  companion object {
+    const val NAME = "SvgaPlayerView"
   }
 
-  public override fun createViewInstance(context: ThemedReactContext): SvgaPlayerView {
-    return SvgaPlayerView(context)
+  private val mDelegate: ViewManagerDelegate<SvgaPlayerView> = SvgaPlayerViewManagerDelegate(this)
+
+  override fun getName(): String = NAME
+
+  override fun getDelegate(): ViewManagerDelegate<SvgaPlayerView>? = mDelegate
+
+  override fun createViewInstance(c: ThemedReactContext): SvgaPlayerView {
+    return SvgaPlayerView(c, null, 0)
   }
 
-  // 属性设置方法
-  @ReactProp(name = "source")
-  fun setSource(view: SvgaPlayerView?, source: String?) {
-    view?.setSource(source)
-  }
+  override fun setSource(view: SvgaPlayerView, source: String?) {
+    val context = view.context
+    source?.let {
+      val parseCompletion = object : SVGAParser.ParseCompletion {
+        override fun onError() {
+          view.setVideoItem(null)
+          view.clear()
 
-  @ReactProp(name = "autoPlay", defaultBoolean = true)
-  fun setAutoPlay(view: SvgaPlayerView?, autoPlay: Boolean) {
-    view?.setAutoPlay(autoPlay)
-  }
+          val errorData = Arguments.createMap()
+          errorData.putString("error", "Failed to load SVGA : $it")
+          val surfaceId = UIManagerHelper.getSurfaceId(context)
+          val errorEvent = TopErrorEvent(surfaceId, view.id, errorData)
+          val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context as ThemedReactContext, view.id)
+          dispatcher?.dispatchEvent(errorEvent)
+        }
 
-  @ReactProp(name = "loops", defaultInt = 1)
-  fun setLoops(view: SvgaPlayerView?, loops: Int) {
-    view?.setLoops(loops)
-  }
-
-  @ReactProp(name = "clearsAfterStop", defaultBoolean = true)
-  fun setClearsAfterStop(view: SvgaPlayerView?, clearsAfterStop: Boolean) {
-    view?.setClearsAfterStop(clearsAfterStop)
-  }
-
-  // 命令方法 - 新架构支持
-  override fun receiveCommand(view: SvgaPlayerView, commandId: String, args: ReadableArray?) {
-    when (commandId) {
-      "startAnimation" -> view.startAnimation()
-      "startAnimationWithRange" -> {
-        args?.let {
-          if (it.size() >= 3) {
-            val location = it.getInt(0)
-            val length = it.getInt(1)
-            val reverse = it.getBoolean(2)
-            view.startAnimationWithRange(location, length, reverse)
+        override fun onComplete(videoItem: SVGAVideoEntity) {
+          view.setVideoItem(videoItem)
+          if(view.autoPlay){
+            view.startAnimationSafely()
           }
         }
       }
-      "pauseAnimation" -> view.pauseAnimation()
-      "stopAnimation" -> view.stopAnimation()
-      "stepToFrame" -> {
-        args?.let {
-          if (it.size() >= 2) {
-            val frame = it.getInt(0)
-            val andPlay = it.getBoolean(1)
-            view.stepToFrame(frame, andPlay)
+
+      when {
+        it.startsWith("http") || it.startsWith("https") -> {
+          SVGAParser(context).decodeFromURL(URL(it), parseCompletion)
+        }
+        it.startsWith("file://") -> {
+          // 移除 file:// 前缀，获取实际文件路径
+          val filePath = it.removePrefix("file://")
+          val file = File(filePath)
+
+          if (file.exists() && file.isFile) {
+            val inputStream = FileInputStream(file)
+            val cacheKey = SVGACache.buildCacheKey(it)
+            SVGAParser(context).decodeFromInputStream(inputStream, cacheKey, parseCompletion)
+          } else {
+            parseCompletion.onError()
           }
         }
-      }
-      "stepToPercentage" -> {
-        args?.let {
-          if (it.size() >= 2) {
-            val percentage = it.getDouble(0)
-            val andPlay = it.getBoolean(1)
-            view.stepToPercentage(percentage, andPlay)
-          }
+        else -> {
+          Log.d("SvgaPlayerViewManager", "Loading from assets: $it")
+          SVGAParser(context).decodeFromAssets(it, parseCompletion)
         }
       }
     }
   }
 
-  // 旧的命令方法保留用于兼容性
-  fun startAnimation(view: SvgaPlayerView?) {
-    view?.startAnimation()
+  override fun setLoops(view: SvgaPlayerView, loops: Int) {
+    view.loops = loops
   }
 
-  fun startAnimationWithRange(view: SvgaPlayerView?, location: Int, length: Int, reverse: Boolean) {
-    view?.startAnimationWithRange(location, length, reverse)
+  override fun setClearsAfterStop(view: SvgaPlayerView, clearsAfterStop: Boolean) {
+    view.clearsAfterDetached = clearsAfterStop
+    view.clearsAfterStop = clearsAfterStop
   }
 
-  fun pauseAnimation(view: SvgaPlayerView?) {
-    view?.pauseAnimation()
+  override fun setAutoPlay(view: SvgaPlayerView, autoPlay: Boolean) {
+    view.autoPlay = autoPlay
   }
 
-  fun stopAnimation(view: SvgaPlayerView?) {
-    view?.stopAnimation()
+
+  override fun receiveCommand(root: SvgaPlayerView, commandId: String, args: ReadableArray?) {
+    super.receiveCommand(root, commandId, args)
+    when (commandId) {
+      "startAnimation" -> startAnimation(root)
+      "stopAnimation" -> stopAnimation(root)
+    }
   }
 
-  fun stepToFrame(view: SvgaPlayerView?, frame: Int, andPlay: Boolean) {
-    view?.stepToFrame(frame, andPlay)
+  override fun startAnimation(view: SvgaPlayerView) {
+    view.startAnimationSafely()
   }
 
-  fun stepToPercentage(view: SvgaPlayerView?, percentage: Double, andPlay: Boolean) {
-    view?.stepToPercentage(percentage, andPlay)
+  override fun stopAnimation(view: SvgaPlayerView) {
+    view.stopAnimation(true)
   }
 
-  // 事件映射 - 添加所有支持的事件
-  override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> {
-    return mapOf(
-      "onLoad" to mapOf(
-        "phasedRegistrationNames" to mapOf(
-          "bubbled" to "onLoad"
-        )
-      ),
-      "onError" to mapOf(
-        "phasedRegistrationNames" to mapOf(
-          "bubbled" to "onError"
-        )
-      ),
-      "onFinished" to mapOf(
-        "phasedRegistrationNames" to mapOf(
-          "bubbled" to "onFinished"
-        )
-      ),
-      "onFrame" to mapOf(
-        "phasedRegistrationNames" to mapOf(
-          "bubbled" to "onFrame"
-        )
-      ),
-      "onPercentage" to mapOf(
-        "phasedRegistrationNames" to mapOf(
-          "bubbled" to "onPercentage"
-        )
-      ),
-      "onPause" to mapOf(
-        "phasedRegistrationNames" to mapOf(
-          "bubbled" to "onPause"
-        )
-      ),
-      "onRepeat" to mapOf(
-        "phasedRegistrationNames" to mapOf(
-          "bubbled" to "onRepeat"
-        )
-      )
-    )
-  }
+  override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any>? {
+    val export = super.getExportedCustomDirectEventTypeConstants()?.toMutableMap()
+      ?: mutableMapOf<String, Any>()
 
-  companion object {
-    const val NAME = "SvgaPlayerView"
+    export[TopErrorEvent.EVENT_NAME] = mapOf("registrationName" to "onError")
+    export[TopFinishedEvent.EVENT_NAME] = mapOf("registrationName" to "onFinished")
+
+    return export
   }
 }
