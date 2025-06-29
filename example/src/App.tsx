@@ -24,6 +24,7 @@ export default function App() {
   const [autoPlay, setAutoPlay] = useState(true);
   const [loops, setLoops] = useState(0);
   const [clearsAfterStop, setClearsAfterStop] = useState(true);
+  const [showPlayer, setShowPlayer] = useState(true); // 用于测试组件生命周期
 
   // 添加日志的辅助函数
   const addLog = (message: string) => {
@@ -38,6 +39,15 @@ export default function App() {
     addLog('🚀 SVGA Player Test App initialized');
   }, []);
 
+  // 监控播放器组件的挂载/卸载
+  useEffect(() => {
+    if (showPlayer) {
+      addLog('📱 SVGA Player component mounted');
+    } else {
+      addLog('🗑️ SVGA Player component unmounted');
+    }
+  }, [showPlayer]);
+
   // 事件处理函数
   const handleError = (event: SvgaErrorEvent) => {
     const errorMsg = event.error || 'Unknown error';
@@ -47,13 +57,13 @@ export default function App() {
   };
 
   const handleFinished = () => {
-    addLog('🏁 SVGA playbook finished');
+    addLog('🏁 SVGA animation finished - event received');
     setIsPlaying(false);
   };
 
   // 控制函数
   const handleStart = () => {
-    addLog('▶️ Starting animation...');
+    addLog(`▶️ Starting animation... (loops: ${loops === 0 ? '∞' : loops})`);
     setIsPlaying(true);
     svgaRef.current?.startAnimation();
   };
@@ -123,7 +133,7 @@ export default function App() {
           <Text style={styles.settingLabel}>Loops:</Text>
           <View style={styles.loopButtons}>
             <Button
-              title="0"
+              title="∞"
               onPress={() => setLoops(0)}
               color={loops === 0 ? 'red' : undefined}
             />
@@ -131,6 +141,11 @@ export default function App() {
               title="1"
               onPress={() => setLoops(1)}
               color={loops === 1 ? 'red' : undefined}
+            />
+            <Button
+              title="2"
+              onPress={() => setLoops(2)}
+              color={loops === 2 ? 'red' : undefined}
             />
             <Button
               title="3"
@@ -143,22 +158,56 @@ export default function App() {
 
       {/* SVGA播放器 */}
       <View style={styles.playerContainer}>
-        <SvgaPlayerView
-          ref={svgaRef}
-          source={currentSource}
-          autoPlay={autoPlay}
-          loops={loops}
-          clearsAfterStop={clearsAfterStop}
-          style={styles.player}
-          onError={handleError}
-          onFinished={handleFinished}
-        />
+        {showPlayer ? (
+          <SvgaPlayerView
+            ref={svgaRef}
+            source={currentSource}
+            autoPlay={autoPlay}
+            loops={loops}
+            clearsAfterStop={clearsAfterStop}
+            style={styles.player}
+            onError={handleError}
+            onFinished={handleFinished}
+          />
+        ) : (
+          <View style={[styles.player, styles.placeholderPlayer]}>
+            <Text style={styles.placeholderText}>
+              📱 Player Unmounted{'\n'}
+              Use "Mount Player" to restore
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* 控制按钮 */}
       <View style={styles.buttonContainer}>
         <Button title="▶️ Play" onPress={handleStart} />
         <Button title="⏹️ Stop" onPress={handleStop} />
+      </View>
+
+      {/* 生命周期测试按钮 */}
+      <View style={styles.buttonContainer}>
+        <Button
+          title={showPlayer ? '🗑️ Unmount Player' : '📱 Mount Player'}
+          onPress={() => {
+            if (showPlayer) {
+              addLog('🗑️ Unmounting SVGA Player component...');
+              setShowPlayer(false);
+              setIsPlaying(false);
+            } else {
+              addLog('📱 Mounting SVGA Player component...');
+              setShowPlayer(true);
+            }
+          }}
+          color={showPlayer ? 'red' : 'green'}
+        />
+        <Button
+          title="📝 Clear Logs"
+          onPress={() => {
+            setLogs([]);
+            addLog('🧹 Logs cleared');
+          }}
+        />
       </View>
 
       {/* 预设源切换按钮 */}
@@ -347,5 +396,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
     padding: 20,
+  },
+  placeholderPlayer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    borderStyle: 'dashed',
+  },
+  placeholderText: {
+    fontSize: 16,
+    color: '#999',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
