@@ -20,6 +20,8 @@ if linkage != nil
 end
 
 target 'SvgaPlayerExample' do
+  pod 'Protobuf', '= 3.22.1'
+
   config = use_native_modules!
 
   use_react_native!(
