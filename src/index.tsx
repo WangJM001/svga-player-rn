@@ -4,4 +4,3 @@ export type {
   SvgaPlayerViewRef,
   SvgaErrorEvent,
 } from './SvgaPlayerView';
-export { default as SvgaPlayerViewNative } from './SvgaPlayerViewNativeComponent';

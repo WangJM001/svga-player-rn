@@ -1,6 +1,6 @@
 {
   "name": "svga-player-rn",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "A react native svga player",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
