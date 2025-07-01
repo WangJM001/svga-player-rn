@@ -44,6 +44,9 @@
     "ios",
     "android"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/WangJM001/svga-player-rn.git"
