@@ -13,7 +13,7 @@ import {
   SvgaPlayerView,
   type SvgaPlayerViewRef,
   type SvgaErrorEvent,
-} from 'svga-player-rn';
+} from '@jayming/svga-player-rn';
 
 export default function App() {
   const svgaRef = useRef<SvgaPlayerViewRef>(null);
