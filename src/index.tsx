@@ -1,6 +1,6 @@
-export { default as RNSvgaPlayer } from './RNSvgaPlayer';
+export { default as SvgaPlayer } from './SvgaPlayer';
 export type {
-  RNSvgaPlayerProps,
-  RNSvgaPlayerRef,
+  SvgaPlayerProps,
+  SvgaPlayerRef,
   SvgaErrorEvent,
-} from './RNSvgaPlayer';
+} from './SvgaPlayer';

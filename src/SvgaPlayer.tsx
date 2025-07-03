@@ -3,14 +3,14 @@ import type { ViewProps } from 'react-native';
 import RNSvgaPlayerNative, {
   Commands,
   type ComponentType,
-} from './RNSvgaPlayerNativeComponent';
+} from './SvgaPlayerNativeComponent';
 
 export interface SvgaErrorEvent {
   error: string;
 }
 
-export interface RNSvgaPlayerProps extends ViewProps {
-  ref?: React.Ref<RNSvgaPlayerRef>;
+export interface SvgaPlayerProps extends ViewProps {
+  ref?: React.Ref<SvgaPlayerRef>;
   source?: string;
   /**
    * 是否自动播放，默认 true
@@ -30,7 +30,7 @@ export interface RNSvgaPlayerProps extends ViewProps {
   onFinished?: () => void;
 }
 
-export interface RNSvgaPlayerRef {
+export interface SvgaPlayerRef {
   /**
    * 从第0帧开始播放动画
    */
@@ -50,24 +50,18 @@ const RNSvgaPlayer = ({
   onError,
   onFinished,
   ...restProps
-}: RNSvgaPlayerProps) => {
+}: SvgaPlayerProps) => {
   const nativeRef = useRef<React.ElementRef<ComponentType>>(null);
 
   useImperativeHandle(ref, () => ({
     startAnimation: () => {
-      console.log('RNSvgaPlayer: startAnimation called from JS');
       if (nativeRef.current) {
         Commands.startAnimation(nativeRef.current);
-      } else {
-        console.log('RNSvgaPlayer: nativeRef.current is null');
       }
     },
     stopAnimation: () => {
-      console.log('RNSvgaPlayer: stopAnimation called from JS');
       if (nativeRef.current) {
         Commands.stopAnimation(nativeRef.current);
-      } else {
-        console.log('RNSvgaPlayer: nativeRef.current is null');
       }
     },
   }));

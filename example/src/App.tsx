@@ -10,13 +10,13 @@ import {
   Switch,
 } from 'react-native';
 import {
-  RNSvgaPlayer,
-  type RNSvgaPlayerRef,
+  SvgaPlayer,
+  type SvgaPlayerRef,
   type SvgaErrorEvent,
 } from '@jayming/svga-player-rn';
 
 export default function App() {
-  const svgaRef = useRef<RNSvgaPlayerRef>(null);
+  const svgaRef = useRef<SvgaPlayerRef>(null);
   const [currentSource, setCurrentSource] = useState<string>('angel.svga');
   const [logs, setLogs] = useState<string[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -159,7 +159,7 @@ export default function App() {
       {/* SVGA播放器 */}
       <View style={styles.playerContainer}>
         {showPlayer ? (
-          <RNSvgaPlayer
+          <SvgaPlayer
             ref={svgaRef}
             source={currentSource}
             autoPlay={autoPlay}
