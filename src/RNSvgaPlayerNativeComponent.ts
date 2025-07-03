@@ -28,4 +28,4 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   supportedCommands: ['startAnimation', 'stopAnimation'],
 });
 
-export default codegenNativeComponent<NativeProps>('SvgaPlayerView');
+export default codegenNativeComponent<NativeProps>('RNSvgaPlayer');

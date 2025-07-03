@@ -148,7 +148,7 @@
     ]
   },
   "codegenConfig": {
-    "name": "SvgaPlayerViewSpec",
+    "name": "RNSvgaPlayerSpec",
     "type": "all",
     "jsSrcsDir": "src",
     "android": {
@@ -156,7 +156,7 @@
     },
     "ios": {
       "componentProvider": {
-        "SvgaPlayerView": "SvgaPlayerView"
+        "RNSvgaPlayer": "RNSvgaPlayer"
       }
     }
   },

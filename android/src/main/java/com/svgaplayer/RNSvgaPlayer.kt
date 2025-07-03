@@ -12,7 +12,7 @@ import com.opensource.svgaplayer.SVGACallback
 import com.opensource.svgaplayer.SVGAImageView
 import com.svgaplayer.events.TopFinishedEvent
 
-class SvgaPlayerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : SVGAImageView(context, attrs, defStyleAttr) {
+class RNSvgaPlayer(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : SVGAImageView(context, attrs, defStyleAttr) {
 
   var currentState: String? = null
   var autoPlay: Boolean = true
@@ -43,7 +43,7 @@ class SvgaPlayerView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) 
         map.putBoolean("finished", true)
         val context = getContext() as ThemedReactContext
         val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, id)
-        val surfaceId = UIManagerHelper.getSurfaceId(this@SvgaPlayerView)
+        val surfaceId = UIManagerHelper.getSurfaceId(this@RNSvgaPlayer)
         val tce = TopFinishedEvent(surfaceId, id, map)
 
         dispatcher?.dispatchEvent(tce)

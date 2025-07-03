@@ -2,12 +2,12 @@
 #import <UIKit/UIKit.h>
 #import <SVGAPlayer/SVGAPlayer.h>
 
-#ifndef SvgaPlayerViewNativeComponent_h
-#define SvgaPlayerViewNativeComponent_h
+#ifndef RNSvgaPlayerNativeComponent_h
+#define RNSvgaPlayerNativeComponent_h
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SvgaPlayerView : RCTViewComponentView <SVGAPlayerDelegate>
+@interface RNSvgaPlayer : RCTViewComponentView <SVGAPlayerDelegate>
 
 // Commands
 - (void)startAnimation;
@@ -17,4 +17,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#endif /* SvgaPlayerViewNativeComponent_h */
+#endif /* RNSvgaPlayerNativeComponent_h */

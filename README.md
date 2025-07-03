@@ -13,10 +13,10 @@ npm install svga-player-rn
 ### 基础用法
 
 ```js
-import { SvgaPlayerView } from 'svga-player-rn';
+import { RNSvgaPlayer } from 'svga-player-rn';
 
 // 基础使用
-<SvgaPlayerView
+<RNSvgaPlayer
   source="https://example.com/animation.svga"
   style={{ width: 200, height: 200 }}
 />;
@@ -26,10 +26,10 @@ import { SvgaPlayerView } from 'svga-player-rn';
 
 ```js
 import React, { useRef, useState } from 'react';
-import { SvgaPlayerView, type SvgaPlayerViewRef, type SvgaSource } from "svga-player-rn";
+import { RNSvgaPlayer, type RNSvgaPlayerRef, type SvgaSource } from "svga-player-rn";
 
 function App() {
-  const svgaRef = useRef<SvgaPlayerViewRef>(null);
+  const svgaRef = useRef<RNSvgaPlayerRef>(null);
   const [source, setSource] = useState<SvgaSource>(
     'https://example.com/animation.svga'
   );
@@ -69,7 +69,7 @@ function App() {
   };
 
   return (
-    <SvgaPlayerView
+    <RNSvgaPlayer
       ref={svgaRef}
       source={source}                             // 支持多种 source 类型
       autoPlay={true}                             // 自动播放，默认 true
@@ -168,7 +168,7 @@ type SvgaSource =
 ### Ref 方法使用示例
 
 ```js
-const svgaRef = useRef < SvgaPlayerViewRef > null;
+const svgaRef = useRef < RNSvgaPlayerRef > null;
 
 // 基本播放控制
 svgaRef.current?.startAnimation(); // 从头开始播放

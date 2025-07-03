@@ -93,6 +93,6 @@ dependencies {
 
 react {
   jsRootDir = file("../src/")
-  libraryName = "SvgaPlayerView"
+  libraryName = "RNSvgaPlayer"
   codegenJavaPackageName = "com.svgaplayer"
 }

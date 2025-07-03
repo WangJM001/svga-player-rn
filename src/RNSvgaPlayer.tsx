@@ -1,16 +1,16 @@
 import React, { useImperativeHandle, useRef } from 'react';
 import type { ViewProps } from 'react-native';
-import SvgaPlayerViewNative, {
+import RNSvgaPlayerNative, {
   Commands,
   type ComponentType,
-} from './SvgaPlayerViewNativeComponent';
+} from './RNSvgaPlayerNativeComponent';
 
 export interface SvgaErrorEvent {
   error: string;
 }
 
-export interface SvgaPlayerViewProps extends ViewProps {
-  ref?: React.Ref<SvgaPlayerViewRef>;
+export interface RNSvgaPlayerProps extends ViewProps {
+  ref?: React.Ref<RNSvgaPlayerRef>;
   source?: string;
   /**
    * 是否自动播放，默认 true
@@ -30,7 +30,7 @@ export interface SvgaPlayerViewProps extends ViewProps {
   onFinished?: () => void;
 }
 
-export interface SvgaPlayerViewRef {
+export interface RNSvgaPlayerRef {
   /**
    * 从第0帧开始播放动画
    */
@@ -41,7 +41,7 @@ export interface SvgaPlayerViewRef {
   stopAnimation: () => void;
 }
 
-const SvgaPlayerView = ({
+const RNSvgaPlayer = ({
   ref,
   autoPlay = true,
   loops = 0,
@@ -50,30 +50,30 @@ const SvgaPlayerView = ({
   onError,
   onFinished,
   ...restProps
-}: SvgaPlayerViewProps) => {
+}: RNSvgaPlayerProps) => {
   const nativeRef = useRef<React.ElementRef<ComponentType>>(null);
 
   useImperativeHandle(ref, () => ({
     startAnimation: () => {
-      console.log('SvgaPlayerView: startAnimation called from JS');
+      console.log('RNSvgaPlayer: startAnimation called from JS');
       if (nativeRef.current) {
         Commands.startAnimation(nativeRef.current);
       } else {
-        console.log('SvgaPlayerView: nativeRef.current is null');
+        console.log('RNSvgaPlayer: nativeRef.current is null');
       }
     },
     stopAnimation: () => {
-      console.log('SvgaPlayerView: stopAnimation called from JS');
+      console.log('RNSvgaPlayer: stopAnimation called from JS');
       if (nativeRef.current) {
         Commands.stopAnimation(nativeRef.current);
       } else {
-        console.log('SvgaPlayerView: nativeRef.current is null');
+        console.log('RNSvgaPlayer: nativeRef.current is null');
       }
     },
   }));
 
   return (
-    <SvgaPlayerViewNative
+    <RNSvgaPlayerNative
       ref={nativeRef}
       source={source}
       autoPlay={autoPlay}
@@ -86,6 +86,6 @@ const SvgaPlayerView = ({
   );
 };
 
-SvgaPlayerView.displayName = 'SvgaPlayerView';
+RNSvgaPlayer.displayName = 'RNSvgaPlayer';
 
-export default SvgaPlayerView;
+export default RNSvgaPlayer;

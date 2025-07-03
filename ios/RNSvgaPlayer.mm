@@ -1,9 +1,9 @@
-#import "SvgaPlayerView.h"
+#import "RNSvgaPlayer.h"
 
-#import <react/renderer/components/SvgaPlayerViewSpec/ComponentDescriptors.h>
-#import <react/renderer/components/SvgaPlayerViewSpec/EventEmitters.h>
-#import <react/renderer/components/SvgaPlayerViewSpec/Props.h>
-#import <react/renderer/components/SvgaPlayerViewSpec/RCTComponentViewHelpers.h>
+#import <react/renderer/components/RNSvgaPlayerSpec/ComponentDescriptors.h>
+#import <react/renderer/components/RNSvgaPlayerSpec/EventEmitters.h>
+#import <react/renderer/components/RNSvgaPlayerSpec/Props.h>
+#import <react/renderer/components/RNSvgaPlayerSpec/RCTComponentViewHelpers.h>
 
 #import <SVGAPlayer/SVGAPlayer.h>
 #import <SVGAPlayer/SVGAParser.h>
@@ -12,11 +12,11 @@
 
 using namespace facebook::react;
 
-@interface SvgaPlayerView () <RCTSvgaPlayerViewViewProtocol, SVGAPlayerDelegate>
+@interface RNSvgaPlayer () <RCTRNSvgaPlayerViewProtocol, SVGAPlayerDelegate>
 
 @end
 
-@implementation SvgaPlayerView {
+@implementation RNSvgaPlayer {
     SVGAPlayer * _svgaPlayer;
     NSString * _currentSource;
     BOOL _autoPlay;
@@ -27,13 +27,13 @@ using namespace facebook::react;
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
-    return concreteComponentDescriptorProvider<SvgaPlayerViewComponentDescriptor>();
+    return concreteComponentDescriptorProvider<RNSvgaPlayerComponentDescriptor>();
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const SvgaPlayerViewProps>();
+    static const auto defaultProps = std::make_shared<const RNSvgaPlayerProps>();
     _props = defaultProps;
 
     _svgaPlayer = [[SVGAPlayer alloc] init];
@@ -54,8 +54,8 @@ using namespace facebook::react;
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
-    const auto &oldViewProps = *std::static_pointer_cast<SvgaPlayerViewProps const>(_props);
-    const auto &newViewProps = *std::static_pointer_cast<SvgaPlayerViewProps const>(props);
+    const auto &oldViewProps = *std::static_pointer_cast<RNSvgaPlayerProps const>(_props);
+    const auto &newViewProps = *std::static_pointer_cast<RNSvgaPlayerProps const>(props);
 
     // 处理 autoPlay 属性 (包括初始设置)
     if (oldProps == nullptr || oldViewProps.autoPlay != newViewProps.autoPlay) {
@@ -94,9 +94,9 @@ using namespace facebook::react;
     [super updateProps:props oldProps:oldProps];
 }
 
-Class<RCTComponentViewProtocol> SvgaPlayerViewCls(void)
+Class<RCTComponentViewProtocol> RNSvgaPlayerCls(void)
 {
-    return SvgaPlayerView.class;
+    return RNSvgaPlayer.class;
 }
 
 // 辅助方法：发送事件
@@ -109,8 +109,8 @@ Class<RCTComponentViewProtocol> SvgaPlayerViewCls(void)
     _currentVideoItem = nil;
 
     if (_eventEmitter != nullptr) {
-        std::dynamic_pointer_cast<const facebook::react::SvgaPlayerViewEventEmitter>(_eventEmitter)
-            ->onError(facebook::react::SvgaPlayerViewEventEmitter::OnError{
+        std::dynamic_pointer_cast<const facebook::react::RNSvgaPlayerEventEmitter>(_eventEmitter)
+            ->onError(facebook::react::RNSvgaPlayerEventEmitter::OnError{
                 .error = std::string([errorMessage UTF8String])
             });
     }
@@ -351,8 +351,8 @@ Class<RCTComponentViewProtocol> SvgaPlayerViewCls(void)
         return;
     }
 
-    std::dynamic_pointer_cast<const facebook::react::SvgaPlayerViewEventEmitter>(_eventEmitter)
-        ->onFinished(facebook::react::SvgaPlayerViewEventEmitter::OnFinished{
+    std::dynamic_pointer_cast<const facebook::react::RNSvgaPlayerEventEmitter>(_eventEmitter)
+        ->onFinished(facebook::react::RNSvgaPlayerEventEmitter::OnFinished{
             .finished = true
         });
 }

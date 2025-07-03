@@ -12,8 +12,8 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.SvgaPlayerViewManagerDelegate
-import com.facebook.react.viewmanagers.SvgaPlayerViewManagerInterface
+import com.facebook.react.viewmanagers.RNSvgaPlayerManagerDelegate
+import com.facebook.react.viewmanagers.RNSvgaPlayerManagerInterface
 import com.opensource.svgaplayer.SVGAParser
 import com.opensource.svgaplayer.SVGAVideoEntity
 import com.opensource.svgaplayer.SVGACache
@@ -24,24 +24,24 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.net.URL
 
-@ReactModule(name = SvgaPlayerViewManager.NAME)
-class SvgaPlayerViewManager : SimpleViewManager<SvgaPlayerView>(), SvgaPlayerViewManagerInterface<SvgaPlayerView> {
+@ReactModule(name = RNSvgaPlayerManager.NAME)
+class RNSvgaPlayerManager : SimpleViewManager<RNSvgaPlayer>(), RNSvgaPlayerManagerInterface<RNSvgaPlayer> {
 
   companion object {
-    const val NAME = "SvgaPlayerView"
+    const val NAME = "RNSvgaPlayer"
   }
 
-  private val mDelegate: ViewManagerDelegate<SvgaPlayerView> = SvgaPlayerViewManagerDelegate(this)
+  private val mDelegate: ViewManagerDelegate<RNSvgaPlayer> = RNSvgaPlayerManagerDelegate(this)
 
   override fun getName(): String = NAME
 
-  override fun getDelegate(): ViewManagerDelegate<SvgaPlayerView>? = mDelegate
+  override fun getDelegate(): ViewManagerDelegate<RNSvgaPlayer>? = mDelegate
 
-  override fun createViewInstance(c: ThemedReactContext): SvgaPlayerView {
-    return SvgaPlayerView(c, null, 0)
+  override fun createViewInstance(c: ThemedReactContext): RNSvgaPlayer {
+    return RNSvgaPlayer(c, null, 0)
   }
 
-  override fun setSource(view: SvgaPlayerView, source: String?) {
+  override fun setSource(view: RNSvgaPlayer, source: String?) {
     val context = view.context
     source?.let {
       val parseCompletion = object : SVGAParser.ParseCompletion {
@@ -83,28 +83,28 @@ class SvgaPlayerViewManager : SimpleViewManager<SvgaPlayerView>(), SvgaPlayerVie
           }
         }
         else -> {
-          Log.d("SvgaPlayerViewManager", "Loading from assets: $it")
+          Log.d("RNSvgaPlayerManager", "Loading from assets: $it")
           SVGAParser(context).decodeFromAssets(it, parseCompletion)
         }
       }
     }
   }
 
-  override fun setLoops(view: SvgaPlayerView, loops: Int) {
+  override fun setLoops(view: RNSvgaPlayer, loops: Int) {
     view.loops = loops
   }
 
-  override fun setClearsAfterStop(view: SvgaPlayerView, clearsAfterStop: Boolean) {
+  override fun setClearsAfterStop(view: RNSvgaPlayer, clearsAfterStop: Boolean) {
     view.clearsAfterDetached = clearsAfterStop
     view.clearsAfterStop = clearsAfterStop
   }
 
-  override fun setAutoPlay(view: SvgaPlayerView, autoPlay: Boolean) {
+  override fun setAutoPlay(view: RNSvgaPlayer, autoPlay: Boolean) {
     view.autoPlay = autoPlay
   }
 
 
-  override fun receiveCommand(root: SvgaPlayerView, commandId: String, args: ReadableArray?) {
+  override fun receiveCommand(root: RNSvgaPlayer, commandId: String, args: ReadableArray?) {
     super.receiveCommand(root, commandId, args)
     when (commandId) {
       "startAnimation" -> startAnimation(root)
@@ -112,11 +112,11 @@ class SvgaPlayerViewManager : SimpleViewManager<SvgaPlayerView>(), SvgaPlayerVie
     }
   }
 
-  override fun startAnimation(view: SvgaPlayerView) {
+  override fun startAnimation(view: RNSvgaPlayer) {
     view.startAnimationSafely()
   }
 
-  override fun stopAnimation(view: SvgaPlayerView) {
+  override fun stopAnimation(view: RNSvgaPlayer) {
     view.stopAnimation(true)
   }
 
