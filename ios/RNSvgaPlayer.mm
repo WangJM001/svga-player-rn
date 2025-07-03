@@ -40,16 +40,25 @@ using namespace facebook::react;
     _svgaPlayer.delegate = self;
     _svgaPlayer.loops = 0; // 默认无限循环
     _svgaPlayer.clearsAfterStop = YES; // 默认停止后清空画布
+    _svgaPlayer.contentMode = UIViewContentModeScaleAspectFit;
 
     // 设置合理的默认值，实际值会在 updateProps 中设置
     _autoPlay = NO; // 默认不自动播放，等待 props 更新
     _loops = 0; // 默认无限循环
     _clearsAfterStop = YES; // 默认停止后清空画布
 
+
+
     self.contentView = _svgaPlayer;
   }
 
   return self;
+}
+
+-(void)layoutSubviews
+{
+  [super layoutSubviews];
+  _svgaPlayer.frame = self.bounds;
 }
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
