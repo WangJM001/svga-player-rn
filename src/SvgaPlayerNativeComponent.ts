@@ -2,6 +2,7 @@ import type { HostComponent, ViewProps } from 'react-native';
 import type {
   BubblingEventHandler,
   Int32,
+  WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
@@ -11,6 +12,7 @@ interface NativeProps extends ViewProps {
   autoPlay?: boolean;
   loops?: Int32;
   clearsAfterStop?: boolean;
+  align?: WithDefault<'top' | 'bottom' | 'center', 'center'>;
 
   // 事件回调
   onError?: BubblingEventHandler<{ error: string }>;

@@ -17,7 +17,7 @@ import {
 
 export default function App() {
   const svgaRef = useRef<SvgaPlayerRef>(null);
-  const [currentSource, setCurrentSource] = useState<string>('angel.svga');
+  const [currentSource, setCurrentSource] = useState<string>('jianianhua.svga');
   const [logs, setLogs] = useState<string[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [customUrl, setCustomUrl] = useState('');
@@ -25,6 +25,7 @@ export default function App() {
   const [loops, setLoops] = useState(0);
   const [clearsAfterStop, setClearsAfterStop] = useState(true);
   const [showPlayer, setShowPlayer] = useState(true); // 用于测试组件生命周期
+  const [align, setAlign] = useState<'top' | 'bottom' | 'center'>('center');
 
   // 添加日志的辅助函数
   const addLog = (message: string) => {
@@ -83,7 +84,7 @@ export default function App() {
   };
 
   const switchToAsset = () => {
-    const newSource = 'angel.svga';
+    const newSource = 'jianianhua.svga';
     addLog(`🔄 Switching to asset file: ${newSource}`);
     setCurrentSource(newSource);
   };
@@ -154,6 +155,27 @@ export default function App() {
             />
           </View>
         </View>
+
+        <View style={styles.settingRow}>
+          <Text style={styles.settingLabel}>Align Mode:</Text>
+          <View style={styles.contentModeButtons}>
+            <Button
+              title="Top"
+              onPress={() => setAlign('top')}
+              color={align === 'top' ? 'blue' : undefined}
+            />
+            <Button
+              title="Center"
+              onPress={() => setAlign('center')}
+              color={align === 'center' ? 'green' : undefined}
+            />
+            <Button
+              title="Bottom"
+              onPress={() => setAlign('bottom')}
+              color={align === 'bottom' ? 'red' : undefined}
+            />
+          </View>
+        </View>
       </View>
 
       {/* SVGA播放器 */}
@@ -165,6 +187,7 @@ export default function App() {
             autoPlay={autoPlay}
             loops={loops}
             clearsAfterStop={clearsAfterStop}
+            align={align}
             style={styles.player}
             onError={handleError}
             onFinished={handleFinished}
@@ -310,13 +333,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
+  contentModeButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
   playerContainer: {
     alignItems: 'center',
     marginBottom: 16,
   },
   player: {
     width: 280,
-    height: 280,
+    height: 680,
     borderWidth: 2,
     borderColor: '#007AFF',
     borderRadius: 12,

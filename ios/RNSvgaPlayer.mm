@@ -83,6 +83,11 @@ using namespace facebook::react;
         _svgaPlayer.clearsAfterStop = _clearsAfterStop;
     }
 
+    // 处理 align 属性 (包括初始设置)
+    if (oldProps == nullptr || oldViewProps.align != newViewProps.align) {
+        [self updateContentModeWithAlign:newViewProps.align];
+    }
+
     // 处理 source 属性 (包括初始设置)
     if (oldProps == nullptr || oldViewProps.source != newViewProps.source) {
         NSString *newSource = newViewProps.source.empty() ? nil : [[NSString alloc] initWithUTF8String:newViewProps.source.c_str()];
@@ -106,6 +111,23 @@ using namespace facebook::react;
 Class<RCTComponentViewProtocol> RNSvgaPlayerCls(void)
 {
     return RNSvgaPlayer.class;
+}
+
+// 辅助方法：根据 align 属性设置 contentMode
+- (void)updateContentModeWithAlign:(RNSvgaPlayerAlign)align
+{
+    UIViewContentMode contentMode;
+
+    // 根据 align 枚举值设置对应的 contentMode
+    if (align == RNSvgaPlayerAlign::Top) {
+        contentMode = UIViewContentModeTop;
+    } else if (align == RNSvgaPlayerAlign::Bottom) {
+        contentMode = UIViewContentModeBottom;
+    } else { // Center 或默认值
+        contentMode = UIViewContentModeScaleAspectFit;
+    }
+
+    _svgaPlayer.contentMode = contentMode;
 }
 
 // 辅助方法：发送事件

@@ -12,6 +12,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
+import android.widget.ImageView
 import com.facebook.react.viewmanagers.RNSvgaPlayerManagerDelegate
 import com.facebook.react.viewmanagers.RNSvgaPlayerManagerInterface
 import com.opensource.svgaplayer.SVGAParser
@@ -101,6 +102,17 @@ class RNSvgaPlayerManager : SimpleViewManager<RNSvgaPlayer>(), RNSvgaPlayerManag
 
   override fun setAutoPlay(view: RNSvgaPlayer, autoPlay: Boolean) {
     view.autoPlay = autoPlay
+  }
+
+  override fun setAlign(view: RNSvgaPlayer, align: String?) {
+    val scaleType = when (align) {
+      "bottom" -> ImageView.ScaleType.FIT_END
+      "top" -> ImageView.ScaleType.FIT_START
+      "center" -> ImageView.ScaleType.FIT_CENTER
+      else -> ImageView.ScaleType.FIT_CENTER
+    }
+
+    view.scaleType = scaleType
   }
 
 

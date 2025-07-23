@@ -24,6 +24,10 @@ export interface SvgaPlayerProps extends ViewProps {
    * 动画停止后是否清空画布，默认 true
    */
   clearsAfterStop?: boolean;
+  /**
+   * 内容对齐方式
+   */
+  align?: 'top' | 'bottom' | 'center';
 
   // 事件回调
   onError?: (event: SvgaErrorEvent) => void;
