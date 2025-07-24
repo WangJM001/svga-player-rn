@@ -147,6 +147,14 @@ Class<RCTComponentViewProtocol> RNSvgaPlayerCls(void)
     }
 }
 
+- (void)sendLoadedEvent
+{
+    if (_eventEmitter != nullptr) {
+        std::dynamic_pointer_cast<const facebook::react::RNSvgaPlayerEventEmitter>(_eventEmitter)
+            ->onLoaded(facebook::react::RNSvgaPlayerEventEmitter::OnLoaded{});
+    }
+}
+
 // 辅助方法：处理文件路径
 - (NSString *)resolveFilePath:(NSString *)source
 {
@@ -236,6 +244,9 @@ Class<RCTComponentViewProtocol> RNSvgaPlayerCls(void)
             if (videoItem) {
                 self->_currentVideoItem = videoItem;
 
+                // 触发 onLoaded 事件
+                [self sendLoadedEvent];
+
                 // 确保delegate被正确设置
                 self->_svgaPlayer.delegate = self;
                 [self->_svgaPlayer setVideoItem:videoItem];
@@ -278,6 +289,9 @@ Class<RCTComponentViewProtocol> RNSvgaPlayerCls(void)
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (videoItem) {
                         self->_currentVideoItem = videoItem;
+
+                        // 触发 onLoaded 事件
+                        [self sendLoadedEvent];
 
                         // 确保delegate被正确设置
                         self->_svgaPlayer.delegate = self;
@@ -322,6 +336,9 @@ Class<RCTComponentViewProtocol> RNSvgaPlayerCls(void)
       dispatch_async(dispatch_get_main_queue(), ^{
         if (videoItem) {
           self->_currentVideoItem = videoItem;
+
+          // 触发 onLoaded 事件
+          [self sendLoadedEvent];
 
           // 确保delegate被正确设置
           self->_svgaPlayer.delegate = self;

@@ -6,7 +6,6 @@ import {
   Alert,
   Text,
   ScrollView,
-  TextInput,
   Switch,
 } from 'react-native';
 import {
@@ -15,17 +14,26 @@ import {
   type SvgaErrorEvent,
 } from '@jayming/svga-player-rn';
 
+// Assets 中的 SVGA 文件列表
+const SVGA_ASSETS = [
+  { name: '嘉年华', file: 'jianianhua.svga' },
+  { name: '天使', file: 'angel.svga' },
+  { name: '王者', file: 'kingset.svga' },
+  { name: '大文件', file: '1651892151.svga' },
+];
+
 export default function App() {
   const svgaRef = useRef<SvgaPlayerRef>(null);
-  const [currentSource, setCurrentSource] = useState<string>('jianianhua.svga');
+  const [currentAssetIndex, setCurrentAssetIndex] = useState<number>(0);
   const [logs, setLogs] = useState<string[]>([]);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [customUrl, setCustomUrl] = useState('');
   const [autoPlay, setAutoPlay] = useState(true);
   const [loops, setLoops] = useState(0);
   const [clearsAfterStop, setClearsAfterStop] = useState(true);
-  const [showPlayer, setShowPlayer] = useState(true); // 用于测试组件生命周期
   const [align, setAlign] = useState<'top' | 'bottom' | 'center'>('center');
+
+  // 当前源
+  const currentSource =
+    SVGA_ASSETS[currentAssetIndex]?.file || 'jianianhua.svga';
 
   // 添加日志的辅助函数
   const addLog = (message: string) => {
@@ -40,61 +48,40 @@ export default function App() {
     addLog('🚀 SVGA Player Test App initialized');
   }, []);
 
-  // 监控播放器组件的挂载/卸载
-  useEffect(() => {
-    if (showPlayer) {
-      addLog('📱 SVGA Player component mounted');
-    } else {
-      addLog('🗑️ SVGA Player component unmounted');
-    }
-  }, [showPlayer]);
-
   // 事件处理函数
   const handleError = (event: SvgaErrorEvent) => {
     const errorMsg = event.error || 'Unknown error';
     addLog(`❌ SVGA load error: ${errorMsg}`);
-    setIsPlaying(false);
     Alert.alert('Error', errorMsg);
   };
 
   const handleFinished = () => {
     addLog('🏁 SVGA animation finished - event received');
-    setIsPlaying(false);
+  };
+
+  const handleLoaded = () => {
+    addLog(
+      `✅ [${SVGA_ASSETS[currentAssetIndex]?.name}] SVGA loaded successfully`
+    );
   };
 
   // 控制函数
   const handleStart = () => {
     addLog(`▶️ Starting animation... (loops: ${loops === 0 ? '∞' : loops})`);
-    setIsPlaying(true);
     svgaRef.current?.startAnimation();
   };
 
   const handleStop = () => {
     addLog('⏹️ Stopping animation...');
-    setIsPlaying(false);
     svgaRef.current?.stopAnimation();
   };
 
-  // 源切换函数
-  const switchToRemoteURL = () => {
-    const newSource =
-      'https://raw.githubusercontent.com/yyued/SVGAPlayer-iOS/master/SVGAPlayer/Samples/Goddess.svga';
-    addLog(`🔄 Switching to remote URL: ${newSource}`);
-    setCurrentSource(newSource);
-  };
-
-  const switchToAsset = () => {
-    const newSource = 'jianianhua.svga';
-    addLog(`🔄 Switching to asset file: ${newSource}`);
-    setCurrentSource(newSource);
-  };
-
-  const useCustomUrl = () => {
-    if (customUrl.trim()) {
-      addLog(`🔄 Switching to custom URL: ${customUrl}`);
-      setCurrentSource(customUrl.trim());
-    } else {
-      Alert.alert('Error', 'Please enter a valid URL');
+  // SVGA 资源切换函数
+  const switchToAsset = (index: number) => {
+    const asset = SVGA_ASSETS[index];
+    if (asset) {
+      addLog(`🔄 Switching to: ${asset.name} (${asset.file})`);
+      setCurrentAssetIndex(index);
     }
   };
 
@@ -105,17 +92,6 @@ export default function App() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* 状态信息区域 */}
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusTitle}>🎬 SVGA Player Status</Text>
-        <Text style={styles.statusText}>
-          Status: {isPlaying ? '🎵 Playing' : '⏸️ Stopped'}
-        </Text>
-        <Text style={styles.statusText} numberOfLines={2}>
-          Source: {currentSource}
-        </Text>
-      </View>
-
       {/* 播放器设置 */}
       <View style={styles.settingsContainer}>
         <Text style={styles.sectionTitle}>⚙️ Settings</Text>
@@ -180,26 +156,18 @@ export default function App() {
 
       {/* SVGA播放器 */}
       <View style={styles.playerContainer}>
-        {showPlayer ? (
-          <SvgaPlayer
-            ref={svgaRef}
-            source={currentSource}
-            autoPlay={autoPlay}
-            loops={loops}
-            clearsAfterStop={clearsAfterStop}
-            align={align}
-            style={styles.player}
-            onError={handleError}
-            onFinished={handleFinished}
-          />
-        ) : (
-          <View style={[styles.player, styles.placeholderPlayer]}>
-            <Text style={styles.placeholderText}>
-              📱 Player Unmounted{'\n'}
-              Use "Mount Player" to restore
-            </Text>
-          </View>
-        )}
+        <SvgaPlayer
+          ref={svgaRef}
+          source={currentSource}
+          autoPlay={autoPlay}
+          loops={loops}
+          clearsAfterStop={clearsAfterStop}
+          align={align}
+          style={styles.player}
+          onError={handleError}
+          onFinished={handleFinished}
+          onLoaded={handleLoaded}
+        />
       </View>
 
       {/* 控制按钮 */}
@@ -208,48 +176,22 @@ export default function App() {
         <Button title="⏹️ Stop" onPress={handleStop} />
       </View>
 
-      {/* 生命周期测试按钮 */}
-      <View style={styles.buttonContainer}>
-        <Button
-          title={showPlayer ? '🗑️ Unmount Player' : '📱 Mount Player'}
-          onPress={() => {
-            if (showPlayer) {
-              addLog('🗑️ Unmounting SVGA Player component...');
-              setShowPlayer(false);
-              setIsPlaying(false);
-            } else {
-              addLog('📱 Mounting SVGA Player component...');
-              setShowPlayer(true);
-            }
-          }}
-          color={showPlayer ? 'red' : 'green'}
-        />
-        <Button
-          title="📝 Clear Logs"
-          onPress={() => {
-            setLogs([]);
-            addLog('🧹 Logs cleared');
-          }}
-        />
-      </View>
-
-      {/* 预设源切换按钮 */}
+      {/* SVGA 资源切换按钮 */}
       <View style={styles.sourceButtonContainer}>
-        <Button title="Asset" onPress={switchToAsset} />
-        <Button title="Remote" onPress={switchToRemoteURL} />
-      </View>
-
-      {/* 自定义URL输入 */}
-      <View style={styles.urlInputContainer}>
-        <Text style={styles.sectionTitle}>🔗 Custom URL</Text>
-        <TextInput
-          style={styles.urlInput}
-          value={customUrl}
-          onChangeText={setCustomUrl}
-          placeholder="Enter SVGA URL..."
-          placeholderTextColor="#999"
-        />
-        <Button title="Load URL" onPress={useCustomUrl} />
+        <Text style={styles.sectionTitle}>🎬 SVGA Assets</Text>
+        <View style={styles.contentModeButtons}>
+          {SVGA_ASSETS.map((asset, index) => (
+            <Button
+              key={asset.file}
+              title={asset.name}
+              onPress={() => switchToAsset(index)}
+              color={currentAssetIndex === index ? 'red' : undefined}
+            />
+          ))}
+        </View>
+        <Text style={styles.statusText}>
+          Current: {SVGA_ASSETS[currentAssetIndex]?.name} ({currentSource})
+        </Text>
       </View>
 
       {/* 日志区域 */}
@@ -279,28 +221,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f5f5f5',
-  },
-  statusContainer: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  statusTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#333',
-  },
-  statusText: {
-    fontSize: 14,
-    marginVertical: 2,
-    color: '#666',
   },
   settingsContainer: {
     backgroundColor: '#fff',
@@ -336,14 +256,15 @@ const styles = StyleSheet.create({
   contentModeButtons: {
     flexDirection: 'row',
     gap: 8,
+    flexWrap: 'wrap',
   },
   playerContainer: {
     alignItems: 'center',
     marginBottom: 16,
   },
   player: {
-    width: 280,
-    height: 680,
+    width: 320,
+    height: 420,
     borderWidth: 2,
     borderColor: '#007AFF',
     borderRadius: 12,
@@ -356,12 +277,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sourceButtonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  urlInputContainer: {
     backgroundColor: '#fff',
     padding: 16,
     borderRadius: 12,
@@ -372,14 +287,11 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  urlInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    marginVertical: 8,
-    fontSize: 14,
-    backgroundColor: '#f9f9f9',
+  statusText: {
+    fontSize: 12,
+    marginTop: 8,
+    color: '#666',
+    textAlign: 'center',
   },
   logContainer: {
     backgroundColor: '#fff',
@@ -423,17 +335,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
     padding: 20,
-  },
-  placeholderPlayer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderStyle: 'dashed',
-  },
-  placeholderText: {
-    fontSize: 16,
-    color: '#999',
-    textAlign: 'center',
-    fontWeight: 'bold',
   },
 });

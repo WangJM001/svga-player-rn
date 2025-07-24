@@ -17,6 +17,7 @@ interface NativeProps extends ViewProps {
   // 事件回调
   onError?: BubblingEventHandler<{ error: string }>;
   onFinished?: BubblingEventHandler<{ finished: boolean }>;
+  onLoaded?: BubblingEventHandler<{}>;
 }
 
 export type ComponentType = HostComponent<NativeProps>;

@@ -20,6 +20,7 @@ import com.opensource.svgaplayer.SVGAVideoEntity
 import com.opensource.svgaplayer.SVGACache
 import com.svgaplayer.events.TopErrorEvent
 import com.svgaplayer.events.TopFinishedEvent
+import com.svgaplayer.events.TopLoadedEvent
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -60,6 +61,14 @@ class RNSvgaPlayerManager : SimpleViewManager<RNSvgaPlayer>(), RNSvgaPlayerManag
 
         override fun onComplete(videoItem: SVGAVideoEntity) {
           view.setVideoItem(videoItem)
+
+          // 触发 onLoaded 事件
+          val loadedData = Arguments.createMap()
+          val surfaceId = UIManagerHelper.getSurfaceId(context)
+          val loadedEvent = TopLoadedEvent(surfaceId, view.id, loadedData)
+          val dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context as ThemedReactContext, view.id)
+          dispatcher?.dispatchEvent(loadedEvent)
+
           if(view.autoPlay){
             view.startAnimationSafely()
           }
@@ -138,6 +147,7 @@ class RNSvgaPlayerManager : SimpleViewManager<RNSvgaPlayer>(), RNSvgaPlayerManag
 
     export[TopErrorEvent.EVENT_NAME] = mapOf("registrationName" to "onError")
     export[TopFinishedEvent.EVENT_NAME] = mapOf("registrationName" to "onFinished")
+    export[TopLoadedEvent.EVENT_NAME] = mapOf("registrationName" to "onLoaded")
 
     return export
   }

@@ -31,6 +31,7 @@ export interface SvgaPlayerProps extends ViewProps {
   // 事件回调
   onError?: (event: SvgaErrorEvent) => void;
   onFinished?: () => void;
+  onLoaded?: () => void;
 }
 
 export interface SvgaPlayerRef {
@@ -53,6 +54,7 @@ const RNSvgaPlayer = forwardRef<SvgaPlayerRef, SvgaPlayerProps>(
       source,
       onError,
       onFinished,
+      onLoaded,
       ...restProps
     },
     ref
@@ -81,6 +83,7 @@ const RNSvgaPlayer = forwardRef<SvgaPlayerRef, SvgaPlayerProps>(
         clearsAfterStop={clearsAfterStop}
         onError={(error) => onError?.(error.nativeEvent)}
         onFinished={onFinished}
+        onLoaded={onLoaded}
         {...restProps}
       />
     );

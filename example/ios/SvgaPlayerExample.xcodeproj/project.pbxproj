@@ -11,6 +11,9 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3F3F2A83AD05708DAB22317A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		4B02675A2E11324F0024E7CD /* angel.svga in Resources */ = {isa = PBXBuildFile; fileRef = 4B0267592E11324F0024E7CD /* angel.svga */; };
+		4B944F9E2E31FFD200B4990E /* jianianhua.svga in Resources */ = {isa = PBXBuildFile; fileRef = 4B944F9C2E31FFD200B4990E /* jianianhua.svga */; };
+		4B944F9F2E31FFD200B4990E /* 1651892151.svga in Resources */ = {isa = PBXBuildFile; fileRef = 4B944F9B2E31FFD200B4990E /* 1651892151.svga */; };
+		4B944FA02E31FFD200B4990E /* kingset.svga in Resources */ = {isa = PBXBuildFile; fileRef = 4B944F9D2E31FFD200B4990E /* kingset.svga */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -22,6 +25,9 @@
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = SvgaPlayerExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-SvgaPlayerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SvgaPlayerExample.debug.xcconfig"; path = "Target Support Files/Pods-SvgaPlayerExample/Pods-SvgaPlayerExample.debug.xcconfig"; sourceTree = "<group>"; };
 		4B0267592E11324F0024E7CD /* angel.svga */ = {isa = PBXFileReference; lastKnownFileType = file; path = angel.svga; sourceTree = "<group>"; };
+		4B944F9B2E31FFD200B4990E /* 1651892151.svga */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1651892151.svga; sourceTree = "<group>"; };
+		4B944F9C2E31FFD200B4990E /* jianianhua.svga */ = {isa = PBXFileReference; lastKnownFileType = file; path = jianianhua.svga; sourceTree = "<group>"; };
+		4B944F9D2E31FFD200B4990E /* kingset.svga */ = {isa = PBXFileReference; lastKnownFileType = file; path = kingset.svga; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-SvgaPlayerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SvgaPlayerExample.release.xcconfig"; path = "Target Support Files/Pods-SvgaPlayerExample/Pods-SvgaPlayerExample.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-SvgaPlayerExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SvgaPlayerExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = SvgaPlayerExample/AppDelegate.swift; sourceTree = "<group>"; };
@@ -72,6 +78,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				4B944F9B2E31FFD200B4990E /* 1651892151.svga */,
+				4B944F9C2E31FFD200B4990E /* jianianhua.svga */,
+				4B944F9D2E31FFD200B4990E /* kingset.svga */,
 				4B0267592E11324F0024E7CD /* angel.svga */,
 				13B07FAE1A68108700A75B9A /* SvgaPlayerExample */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -161,6 +170,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B944F9E2E31FFD200B4990E /* jianianhua.svga in Resources */,
+				4B944F9F2E31FFD200B4990E /* 1651892151.svga in Resources */,
+				4B944FA02E31FFD200B4990E /* kingset.svga in Resources */,
 				4B02675A2E11324F0024E7CD /* angel.svga in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
