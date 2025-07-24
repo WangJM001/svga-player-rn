@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import type { ViewProps } from 'react-native';
 import RNSvgaPlayerNative, {
   Commands,
@@ -10,7 +10,6 @@ export interface SvgaErrorEvent {
 }
 
 export interface SvgaPlayerProps extends ViewProps {
-  ref?: React.Ref<SvgaPlayerRef>;
   source?: string;
   /**
    * 是否自动播放，默认 true
@@ -45,44 +44,48 @@ export interface SvgaPlayerRef {
   stopAnimation: () => void;
 }
 
-const RNSvgaPlayer = ({
-  ref,
-  autoPlay = true,
-  loops = 0,
-  clearsAfterStop = false,
-  source,
-  onError,
-  onFinished,
-  ...restProps
-}: SvgaPlayerProps) => {
-  const nativeRef = useRef<React.ElementRef<ComponentType>>(null);
-
-  useImperativeHandle(ref, () => ({
-    startAnimation: () => {
-      if (nativeRef.current) {
-        Commands.startAnimation(nativeRef.current);
-      }
+const RNSvgaPlayer = forwardRef<SvgaPlayerRef, SvgaPlayerProps>(
+  (
+    {
+      autoPlay = true,
+      loops = 0,
+      clearsAfterStop = false,
+      source,
+      onError,
+      onFinished,
+      ...restProps
     },
-    stopAnimation: () => {
-      if (nativeRef.current) {
-        Commands.stopAnimation(nativeRef.current);
-      }
-    },
-  }));
+    ref
+  ) => {
+    const nativeRef = useRef<React.ElementRef<ComponentType>>(null);
 
-  return (
-    <RNSvgaPlayerNative
-      ref={nativeRef}
-      source={source}
-      autoPlay={autoPlay}
-      loops={loops}
-      clearsAfterStop={clearsAfterStop}
-      onError={(error) => onError?.(error.nativeEvent)}
-      onFinished={onFinished}
-      {...restProps}
-    />
-  );
-};
+    useImperativeHandle(ref, () => ({
+      startAnimation: () => {
+        if (nativeRef.current) {
+          Commands.startAnimation(nativeRef.current);
+        }
+      },
+      stopAnimation: () => {
+        if (nativeRef.current) {
+          Commands.stopAnimation(nativeRef.current);
+        }
+      },
+    }));
+
+    return (
+      <RNSvgaPlayerNative
+        ref={nativeRef}
+        source={source}
+        autoPlay={autoPlay}
+        loops={loops}
+        clearsAfterStop={clearsAfterStop}
+        onError={(error) => onError?.(error.nativeEvent)}
+        onFinished={onFinished}
+        {...restProps}
+      />
+    );
+  }
+);
 
 RNSvgaPlayer.displayName = 'RNSvgaPlayer';
 
